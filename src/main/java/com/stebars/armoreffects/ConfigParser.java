@@ -20,11 +20,11 @@ public class ConfigParser {
 	public static Map<Item, ItemEffectRule> itemEffectRules = null;
 	public static List<SetEffectRule> setEffectRules = null;
 	public static Integer applyEveryNTicks = null;
-	public static Integer effectsLastNTicks = null;
+	
+	public static int DEFAULT_DURATION = 200;
 
 	public static void loadAll() {
 		applyEveryNTicks = ConfigDefinition.COMMON.applyEveryNTicks.get();
-		effectsLastNTicks = ConfigDefinition.COMMON.effectsLastNTicks.get();
 		fetchItemEffectRules();
 		fetchSetEffectRules();
 	}
@@ -53,19 +53,21 @@ public class ConfigParser {
 
 				List<Effect> effects = new ArrayList<Effect>();
 				List<Integer> intensities = new ArrayList<Integer>();
+				List<Integer> durations = new ArrayList<Integer>();
 				List<Boolean> hiddens = new ArrayList<Boolean>();
 				for (String effectString: parts[1].split("\\+")) {
 					String[] effectParts = effectString.split("/");
-					if (effectParts.length == 0 || effectParts.length > 3)
-						throw new RuntimeException("Effect does not make sense, must be 1-3 parts separated by '/': " + parts[1]);
+					if (effectParts.length == 0 || effectParts.length > 4)
+						throw new RuntimeException("Effect does not make sense, must be 1-4 parts separated by '/': " + parts[1]);
 					String[] effectNameParts = effectParts[0].split(":");
 					if (effectNameParts.length != 2)
 						throw new RuntimeException("Effect ID does not make sense: " + effectParts[0]);
 					effects.add(ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectNameParts[0], effectNameParts[1])));
 					// TODO check this works for effects without potions, e.g. dolphin's grace.
 					// TODO check this works for modded effects
-					intensities.add(effectParts.length > 1 ? Integer.parseInt(effectParts[1]) : 1);
-					hiddens.add(effectParts.length > 2 ? (Integer.parseInt(effectParts[2]) != 0) : true);
+					intensities.add(effectParts.length >= 2 ? Integer.parseInt(effectParts[1]) : 1);
+					durations.add(effectParts.length >= 3 ? Integer.parseInt(effectParts[2]) : DEFAULT_DURATION);
+					hiddens.add(effectParts.length >= 4 ? (Integer.parseInt(effectParts[2]) != 0) : true);
 				}
 
 				if (effects.size() == 0) continue;
@@ -76,7 +78,7 @@ public class ConfigParser {
 					rule.intensities.addAll(intensities);
 					rule.hiddens.addAll(hiddens);
 				} else
-					itemEffectRules.put(armorItem, new ItemEffectRule(armorItem, effects, intensities, hiddens));
+					itemEffectRules.put(armorItem, new ItemEffectRule(armorItem, effects, intensities, durations, hiddens));
 			} catch (Exception e) {
 				Log.error("Armor Effects mod could not understand your item rule, skipping: ", ruleStringObj);
 				e.printStackTrace();
@@ -107,23 +109,25 @@ public class ConfigParser {
 
 				List<Effect> effects = new ArrayList<Effect>();
 				List<Integer> intensities = new ArrayList<Integer>();
+				List<Integer> durations = new ArrayList<Integer>();
 				List<Boolean> hiddens = new ArrayList<Boolean>();
 				for (String effectString: parts[1].split("\\+")) {
 					String[] effectParts = effectString.split("/");
-					if (effectParts.length == 0 || effectParts.length > 3)
-						throw new RuntimeException("Effect does not make sense, must be 1-3 parts separated by '/': " + parts[1]);
+					if (effectParts.length == 0 || effectParts.length > 4)
+						throw new RuntimeException("Effect does not make sense, must be 1-4 parts separated by '/': " + parts[1]);
 					String[] effectNameParts = effectParts[0].split(":");
 					if (effectNameParts.length != 2)
 						throw new RuntimeException("Effect ID does not make sense: " + effectParts[0]);
 					effects.add(ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectNameParts[0], effectNameParts[1])));
 					// TODO check this works for effects without potions, e.g. dolphin's grace.
 					// TODO check this works for modded effects
-					intensities.add(effectParts.length > 1 ? Integer.parseInt(effectParts[1]) : 1);
-					hiddens.add(effectParts.length > 2 ? (Integer.parseInt(effectParts[2]) != 0) : true);
+					intensities.add(effectParts.length >= 2 ? Integer.parseInt(effectParts[1]) : 1);
+					durations.add(effectParts.length >= 3 ? Integer.parseInt(effectParts[2]) : 1);
+					hiddens.add(effectParts.length >= 4 ? (Integer.parseInt(effectParts[3]) != 0) : true);
 				}
 
 				if (effects.size() != 0)
-					setEffectRules.add(new SetEffectRule(items, effects, intensities, hiddens));
+					setEffectRules.add(new SetEffectRule(items, effects, intensities, durations, hiddens));
 			} catch (Exception e) {
 				Log.error("Armor Effects mod could not understand your armor-set rule, skipping: ", ruleStringObj);
 				e.printStackTrace();

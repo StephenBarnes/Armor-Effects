@@ -14,12 +14,15 @@ public class SetEffectRule {
 	public Set<Item> items;
 	public List<Effect> effects;
 	public List<Integer> intensities;
+	public List<Integer> durations;
 	public List<Boolean> hiddens;
 
-	public SetEffectRule(Set<Item> itemsArg, List<Effect> effectsArg, List<Integer> intensitiesArg, List<Boolean> hiddensArg) {
+	public SetEffectRule(Set<Item> itemsArg, List<Effect> effectsArg, List<Integer> intensitiesArg, List<Integer> durationsArg,
+			List<Boolean> hiddensArg) {
 		items = itemsArg;
 		effects = effectsArg;
 		intensities = intensitiesArg;
+		durations = durationsArg;
 		hiddens = hiddensArg;
 	}
 	
@@ -35,7 +38,7 @@ public class SetEffectRule {
 	public void apply(PlayerEntity player) {
 		for (int i = 0; i < effects.size(); i++) {
 			boolean show = !hiddens.get(i);
-			player.addEffect(new EffectInstance(effects.get(i), ConfigParser.effectsLastNTicks, intensities.get(i) - 1,
+			player.addEffect(new EffectInstance(effects.get(i), durations.get(i), intensities.get(i) - 1,
 					false, show, show));
 			// args: effect, duration, amplifier, ambient, visible, showIcon
 		}
