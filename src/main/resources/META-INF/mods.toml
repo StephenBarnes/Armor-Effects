@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="Public domain"
+
+[[mods]]
+modId="armoreffects"
+version="1.0"
+displayName="Armor Effects"
+#updateJSONURL=""
+displayURL="https://www.curseforge.com/minecraft/mc-mods/armor-effects"
+#logoFile="logo.png"
+#credits=""
+authors="StephenBarnes"
+description='''
+Apply configurable status effects to players wearing armor.'''
+
+[[dependencies.armorEffects]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36.2.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.armorEffects]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"
