@@ -12,9 +12,8 @@ public class ArmorEffectsMod {
 	public final static String MOD_ID = "armoreffects";
 
 	public ArmorEffectsMod() {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigDefinition.SPEC, "armoreffects-common.toml");
 		MinecraftForge.EVENT_BUS.register(this);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigDefinition.COMMON_SPEC);
-		ConfigParser.loadAll();
 	}
 
 }

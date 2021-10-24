@@ -11,22 +11,25 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class ModEventHandler {
 
 	@SubscribeEvent
-	public static void checkArmor(final PlayerTickEvent event) {		
+	public static void checkArmor(final PlayerTickEvent event) {
+		if (!ConfigParser.initialized)
+			ConfigParser.initialize();
+
 		PlayerEntity player = event.player;
 		if (player.tickCount % ConfigParser.applyEveryNTicks != 0) return; // TODO use config value
-		
+
 		applyAllArmorEffects(player);
 	}
-	
+
 	public static void applyAllArmorEffects(PlayerEntity player) {
 		Iterable<ItemStack> slots = player.getArmorSlots();
 		for (ItemStack slot : slots) {
 			if (slot.isEmpty()) continue;
-			ItemEffectRule itemRule = ConfigParser.getItemEffectRule(slot.getItem());
+			ItemEffectRule itemRule = ConfigParser.itemEffectRules.get(slot.getItem());
 			if (itemRule != null)
 				itemRule.apply(player);
 		}
-		
+
 		for (SetEffectRule setRule: ConfigParser.setEffectRules) {
 			if (setRule.appliesTo(slots))
 				setRule.apply(player);

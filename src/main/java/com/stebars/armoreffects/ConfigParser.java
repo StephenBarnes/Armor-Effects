@@ -19,23 +19,20 @@ public class ConfigParser {
 	public static Map<Item, ItemEffectRule> itemEffectRules = null;
 	public static List<SetEffectRule> setEffectRules = null;
 	public static Integer applyEveryNTicks = null;
+	public static boolean initialized = false;
 
 	public static int DEFAULT_DURATION = 200;
 
-	public static void loadAll() {
-		applyEveryNTicks = ConfigDefinition.COMMON.applyEveryNTicks.get();
+	public static void initialize() {
+		initialized = true;
+		applyEveryNTicks = ConfigDefinition.applyEveryNTicks.get();
 		fetchEffectRules();
 	}
 
-	public static ItemEffectRule getItemEffectRule(Item item) {
-		return itemEffectRules.get(item); // TODO get rid of this function, if it still works with modded armor
-	}
-
 	private static void fetchEffectRules() {
-		// TODO if modded items don't work, maybe set the set effect rules to null, then fetch here if it's null
 		setEffectRules = new ArrayList<SetEffectRule>();
 		itemEffectRules = new HashMap<Item, ItemEffectRule>();
-		List<? extends String> ruleStrings = ConfigDefinition.COMMON.effectRules.get();
+		List<? extends String> ruleStrings = ConfigDefinition.effectRules.get();
 		for (Object ruleStringObj : ruleStrings) {
 			try {
 				String ruleString = (String) ruleStringObj;
@@ -63,8 +60,6 @@ public class ConfigParser {
 					if (effectNameParts.length != 2)
 						throw new RuntimeException("Effect ID does not make sense: " + effectParts[0]);
 					effects.add(ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectNameParts[0], effectNameParts[1])));
-					// TODO check this works for effects without potions, e.g. dolphin's grace.
-					// TODO check this works for modded effects
 					intensities.add(effectParts.length >= 2 ? Integer.parseInt(effectParts[1]) : 1);
 					durations.add(effectParts.length >= 3 ? Integer.parseInt(effectParts[2]) : DEFAULT_DURATION);
 					hiddens.add(effectParts.length >= 4 ? (Integer.parseInt(effectParts[3]) != 0) : true);
@@ -85,11 +80,9 @@ public class ConfigParser {
 				} else
 					setEffectRules.add(new SetEffectRule(new HashSet<Item>(items), effects, intensities, durations, hiddens));
 			} catch (Exception e) {
-				Log.error("Armor Effects mod could not understand your armor-set rule, skipping: ", ruleStringObj);
+				Log.error("Armor Effects mod could not understand your armor-effect rule, skipping: ", ruleStringObj);
 				e.printStackTrace();
 			}
-
-			// TODO test all this with some modded armor, since the registration happens at a different time
 		}
 	}
 
