@@ -1,7 +1,5 @@
 package com.stebars.armoreffects;
 
-import org.jline.utils.Log;
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -30,9 +28,6 @@ public class ModEventHandler {
 		}
 		
 		for (SetEffectRule setRule: ConfigParser.setEffectRules) {
-			Log.info("testing rule: ", setRule.items);
-			Log.info("result: ", setRule.appliesTo(slots));
-			Log.info("effects are: ", setRule.effects);
 			if (setRule.appliesTo(slots))
 				setRule.apply(player);
 		}

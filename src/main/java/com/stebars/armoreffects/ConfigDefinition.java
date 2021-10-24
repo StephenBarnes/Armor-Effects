@@ -12,18 +12,13 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 public class ConfigDefinition {
 	public static class Common {	
 
-		public ConfigValue<List<? extends String>> setEffects;
-		public ConfigValue<List<? extends String>> itemEffects;
+		public ConfigValue<List<? extends String>> effectRules;
 		public ConfigValue<Integer> applyEveryNTicks;
 
 		public Common(ForgeConfigSpec.Builder builder) {
-			setEffects = builder.comment("Sets of armor items that have effects when all are worn at the same time.") // TODO explain format
-					.defineList("setEffects", Arrays.asList(
-							"minecraft:diamond_helmet+minecraft:diamond_chestplate+minecraft:diamond_leggings+minecraft:diamond_boots=minecraft:night_vision/1/400/0"
-							),
-							o -> o instanceof String);
-			itemEffects = builder.comment("Individual armor items that have effects when worn.") // TODO explain format
-					.defineList("itemEffects", Arrays.asList(
+			effectRules = builder.comment("Sets of armor items that have effects when all are worn at the same time.") // TODO explain format
+					.defineList("effectRules", Arrays.asList(
+							"minecraft:diamond_helmet+minecraft:diamond_chestplate+minecraft:diamond_leggings+minecraft:diamond_boots=minecraft:night_vision/1/400/0",
 							"minecraft:golden_helmet=minecraft:haste/1+minecraft:speed/2/100/0",
 							"minecraft:iron_helmet=minecraft:poison/2/800"
 							),
